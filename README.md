@@ -24,6 +24,8 @@ Every time GenericAgent solves a new task, it automatically crystallizes the exe
 > **🤖 Self-Bootstrap Proof** — Everything in this repository, from installing Git and running `git init` to every commit message, was completed autonomously by GenericAgent. The author never opened a terminal once.
 
 > **📝 Personal Note** — I'm using this fork primarily to experiment with Gemini models and to build up a personal skill tree for automating my development workflow. If you're trying this out, I recommend starting with small, well-defined tasks to let the skill tree grow organically.
+>
+> **My setup**: Gemini 1.5 Pro as the primary model, with tasks focused on file management and Git automation. Skill tree is stored in `~/agent_skills/` for easy backup.
 
 ## 📋 Core Features
 - **Self-Evolving**: Automatically crystallizes each task into an skill. Capabilities grow with every use, forming your personal skill tree.
@@ -45,7 +47,3 @@ This is what fundamentally distinguishes GenericAgent from every other agent fra
 | What you say | What the agent does the first time | Every time after |
 |---|---|---|
 | *"Read my WeChat messages"* | Install deps → reverse DB → write read script → save skill | **one-line invoke** |
-| *"Monitor stocks and alert me"* | Install mootdx → build selection flow → configure cron → save skill | **one-line start** |
-| *"Send this file via Gmail"* | Configure OAuth → write send script → save skill | **ready to use** |
-
-After a few weeks, your agent instance will have a skill tree no one 
