@@ -21,6 +21,8 @@ All PRs go through a strict automated code review skill. Key expectations:
 
 > ⚠️ This review is deliberately strict — most AI-generated code (e.g. Claude Code output) will not pass as-is. Read the full principles before submitting.
 
+> 📝 **Personal note (fork):** I'm using this repo primarily for learning. I won't be opening PRs upstream unless I find something genuinely worth contributing. Notes and experiments may appear in branches.
+
 ## Skill Contributions
 
 GenericAgent evolves through skills. Not all skills belong in the core repo:
