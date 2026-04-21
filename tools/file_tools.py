@@ -86,8 +86,29 @@ class FileTools:
         except Exception as e:
             return f"Error appending to file: {e}"
 
-    def list_directory(self, path: str = ".") -> str:
+    def list_directory(self, path: str = ".", show_hidden: bool = False) -> str:
         """List the contents of a directory.
 
         Args:
-            path
+            path: Relative path to the directory. Defaults to working_dir.
+            show_hidden: Whether to include hidden files (starting with '.').
+                         Defaults to False since I rarely want to see dotfiles.
+
+        Returns:
+            A JSON-formatted list of entry names, or an error message.
+        """
+        target = self._safe_path(path)
+        if not target.exists():
+            return f"Error: Directory '{path}' does not exist."
+        if not target.is_dir():
+            return f"Error: '{path}' is not a directory."
+        try:
+            entries = sorted(target.iterdir(), key=lambda e: (e.is_file(), e.name.lower()))
+            names = [
+                e.name + ("/" if e.is_dir() else "")
+                for e in entries
+                if show_hidden or not e.name.startswith(".")
+            ]
+            return json.dumps(names, indent=2)
+        except Exception as e:
+            return f"Error listing directory: {e}"
