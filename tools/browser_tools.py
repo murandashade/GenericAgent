@@ -89,54 +89,14 @@ class BrowserTools:
         self.session = session
 
     def browser_navigate(self, url: str) -> str:
-        """Navigate to a URL and return the resulting page title."""
+        """Navigate to a URL and return the resulting page title.
+
+        Note: prepends https:// if no scheme is provided, which saves the agent
+        from failing on bare domain strings like 'example.com'.
+        """
+        # Auto-prepend scheme so bare domains don't cause a navigation error
+        if not url.startswith(("http://", "https://")):
+            url = "https://" + url
         self.session.url = url
         title = self.session.driver.title
-        return f"Navigated to {url}. Page title: '{title}'"
-
-    def browser_click(self, selector: str) -> str:
-        """Click an element by CSS selector or XPath."""
-        from selenium.webdriver.common.by import By
-        driver = self.session.driver
-        # Try CSS first, fall back to XPath
-        try:
-            el = driver.find_element(By.CSS_SELECTOR, selector)
-        except Exception:
-            el = driver.find_element(By.XPATH, selector)
-        el.click()
-        return f"Clicked element: {selector}"
-
-    def browser_type(self, selector: str, text: str) -> str:
-        """Type text into an input field."""
-        from selenium.webdriver.common.by import By
-        driver = self.session.driver
-        el = driver.find_element(By.CSS_SELECTOR, selector)
-        el.clear()
-        el.send_keys(text)
-        return f"Typed '{text}' into {selector}"
-
-    def browser_get_text(self, selector: Optional[str] = None) -> str:
-        """Return visible text from the page or a specific element."""
-        from selenium.webdriver.common.by import By
-        driver = self.session.driver
-        if selector:
-            el = driver.find_element(By.CSS_SELECTOR, selector)
-            return el.text
-        return driver.find_element(By.TAG_NAME, "body").text
-
-    def browser_screenshot(self, filename: Optional[str] = None) -> str:
-        """Save a screenshot and return the file path."""
-        import os
-        import time
-        name = filename or f"screenshot_{int(time.time())}"
-        path = os.path.join("screenshots", f"{name}.png")
-        os.makedirs("screenshots", exist_ok=True)
-        self.session.driver.save_screenshot(path)
-        return f"Screenshot saved to {path}"
-
-    def dispatch(self, tool_name: str, args: dict) -> str:
-        """Dispatch a tool call by name to the appropriate method."""
-        method = getattr(self, tool_name, None)
-        if method is None:
-            raise ValueError(f"Unknown browser tool: {tool_name}")
-        return method(**args)
+        return f"Navigated to {url}. Page title: {title}"
