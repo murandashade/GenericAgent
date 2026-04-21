@@ -23,7 +23,8 @@ class FileTools:
     def _safe_path(self, path: str) -> Path:
         """Resolve and validate that a path stays within working_dir."""
         resolved = (self.working_dir / path).resolve()
-        if not str(resolved).startswith(str(self.working_dir)):
+        # Use os.path.commonpath for a more robust containment check
+        if os.path.commonpath([str(resolved), str(self.working_dir)]) != str(self.working_dir):
             raise PermissionError(
                 f"Access denied: '{path}' resolves outside the working directory."
             )
@@ -89,30 +90,4 @@ class FileTools:
         """List the contents of a directory.
 
         Args:
-            path: Relative path to the directory (defaults to working_dir).
-
-        Returns:
-            A JSON-formatted list of entries with name and type.
-        """
-        target = self._safe_path(path)
-        if not target.exists():
-            return f"Error: Directory '{path}' does not exist."
-        if not target.is_dir():
-            return f"Error: '{path}' is not a directory."
-        try:
-            entries = [
-                {"name": entry.name, "type": "dir" if entry.is_dir() else "file"}
-                for entry in sorted(target.iterdir())
-            ]
-            return json.dumps(entries, indent=2)
-        except Exception as e:
-            return f"Error listing directory: {e}"
-
-    def get_tools(self) -> list:
-        """Return the list of callable tool methods for registration."""
-        return [
-            self.file_read,
-            self.file_write,
-            self.file_append,
-            self.list_directory,
-        ]
+            path
