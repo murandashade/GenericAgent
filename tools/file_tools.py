@@ -49,17 +49,22 @@ class FileTools:
         except Exception as e:
             return f"Error reading file: {e}"
 
-    def file_write(self, path: str, content: str) -> str:
+    def file_write(self, path: str, content: str, overwrite: bool = True) -> str:
         """Write content to a file, creating it (and parent dirs) if needed.
 
         Args:
             path: Relative path to the file.
             content: Text content to write.
+            overwrite: If False, refuse to overwrite an existing file.
+                       Defaults to True.
 
         Returns:
             A success or error message.
         """
         target = self._safe_path(path)
+        # Guard against accidentally clobbering existing files when overwrite=False
+        if not overwrite and target.exists():
+            return f"Error: '{path}' already exists and overwrite is disabled."
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(content, encoding="utf-8")
@@ -86,29 +91,4 @@ class FileTools:
         except Exception as e:
             return f"Error appending to file: {e}"
 
-    def list_directory(self, path: str = ".", show_hidden: bool = False) -> str:
-        """List the contents of a directory.
-
-        Args:
-            path: Relative path to the directory. Defaults to working_dir.
-            show_hidden: Whether to include hidden files (starting with '.').
-                         Defaults to False since I rarely want to see dotfiles.
-
-        Returns:
-            A JSON-formatted list of entry names, or an error message.
-        """
-        target = self._safe_path(path)
-        if not target.exists():
-            return f"Error: Directory '{path}' does not exist."
-        if not target.is_dir():
-            return f"Error: '{path}' is not a directory."
-        try:
-            entries = sorted(target.iterdir(), key=lambda e: (e.is_file(), e.name.lower()))
-            names = [
-                e.name + ("/" if e.is_dir() else "")
-                for e in entries
-                if show_hidden or not e.name.startswith(".")
-            ]
-            return json.dumps(names, indent=2)
-        except Exception as e:
-            return f"Error listing directory: {e}"
+    def list_directory(self, 
